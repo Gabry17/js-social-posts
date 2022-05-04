@@ -5,7 +5,7 @@ const posts = [
     {
         id: 1,
         content: "Placeat libero ipsa nobis ipsum quibusdam quas harum ut. Distinctio minima iusto. Ad ad maiores et sint voluptate recusandae architecto. Et nihil ullam aut alias.",
-        media: "https://unsplash.it/600/300?image=171",
+        media: "https://unsplash.it/609/307?image=178",
         author:{
             name: "Phil Mangione",
             image: ""
@@ -19,7 +19,7 @@ const posts = [
         media: "",
         author:{
             name: "Gabriele Bianchi",
-            image: "https://unsplash.it/300/300?image=15"
+            image: "https://unsplash.it/300/300?image=27"
         },
         likes: 2000,
         created: "2020-07-20"
@@ -27,7 +27,7 @@ const posts = [
     {
         id: 3,
         content: "hdhdh dhdhdhd dhdhdhd hddhhdhdh ausuu euejjd sdeuuuehuceuh dheuchehcuebc ecnuecn",
-        media: "https://unsplash.it/600/300?image=171",
+        media: "https://unsplash.it/630/300?image=222",
         author:{
             name: "Mario Rossi",
             image: ""
@@ -41,7 +41,7 @@ const posts = [
         media: "",
         author:{
             name: "Pinco Pallo",
-            image: "https://unsplash.it/300/300?image=15"
+            image: "https://unsplash.it/300/300?image=17"
         },
         likes: 90,
         created: "2018-07-20"
@@ -53,20 +53,20 @@ const posts = [
 //M2
 //stampare ogni proprieta dell oggetto nell html
 const cont = document.getElementById('container');
-//console.log(cont);
+//const divCont = document.querySelectorAll('.post-meta__icon');
 posts.forEach( (element)=>{
 
     //bonus
     let resultImage = '';
+    
     if(element.author.image === ""){
         let newArray = element.author.name.split(" ",2);
         resultImage = newArray[0].charAt(0).toUpperCase() + newArray[1].charAt(0).toUpperCase();
     }
 
     //bonus
-    let date = new Date(element.created);
-    let convertDate = date.toLocaleString().split(",",2);
-    let newDate = convertDate[0];
+    let date = new Date(element.created).toLocaleString().split(",",2);
+    let newDate = date[0];
 
 
     cont.innerHTML += `
@@ -75,7 +75,7 @@ posts.forEach( (element)=>{
                 <div class="post-meta">                    
                     <div class="post-meta__icon">
                     ${resultImage}
-                        <img class="profile-pic" src="${element.author.image}" alt="">                    
+                    <img class="profile-pic" src="${element.author.image}" alt="${element.author.image}"></img>              
                     </div>
                     <div class="post-meta__data">
                         <div class="post-meta__author">${element.author.name}</div>
@@ -96,7 +96,7 @@ posts.forEach( (element)=>{
                         </a>
                     </div>
                     <div class="likes__counter">
-                        Piace a <b id="like-counter-1" class="js-likes-counter">${element.likes}</b> persone
+                        Piace a <b id="like-counter-${element.id}" class="js-likes-counter">${element.likes}</b> persone
                     </div>
                 </div> 
             </div>            
@@ -118,30 +118,43 @@ dal this trovo il link e leggo la proprietà data-postid per sapere a quale post
 */
 
 const a = document.getElementsByClassName('like-button');
-const b = document.getElementsByClassName('js-likes-counter');
+const likeArray = [];
 
 for(let i = 0; i < a.length; i++){
     const thisA = a[i];
-    thisA.addEventListener('click', function(){
+    thisA.addEventListener('click', function(event){
+        event.preventDefault();
         this.classList.toggle('red');
-        // posts.forEach((e)=>{
-        //     //console.log(parseInt(`${e.id}`) === 1);
-        //     if(parseInt(`${e.id}`) === 1){
-        //         console.log('ciao');
-        //     }
-        // })
-        
-
-        // for(let index = 0; index < b.length; index++){
-        //     const thisB = b[index];
-        //     //console.log(b[1]);
-        //     let result;
-        //     posts.forEach((e)=>{
-        //         //result = e.likes + 1;
-        //         //thisB.innerHTML = `${result}`;
-        //         console.log(b[0]);
-        //     })    
-            
-        // }
+        //prelevo l'indice dell'elemento cliccato
+        const click = posts[i];
+        //prendo numero id in base all indice dell elemento
+        const clickId = click.id;
+        //prendo l elemento con quell id specifico
+        const likeCount = document.getElementById(`like-counter-${clickId}`);
+        //prendo valore dentro l'elemento selezionato e lo trasformo in number
+        let likeNum = parseInt(likeCount.textContent);
+        //se l array non include clickId(se l elemento non e stato cliccato)
+        if(!likeArray.includes(clickId)){
+            //aggiungi +1
+            likeCount.innerHTML = ++ likeNum;
+            //aggiungo incremento alla var likeNum
+            click.likes = likeNum;
+            //pusho nell array il valore cliccato
+            likeArray.push(clickId);
+            //se l array include clickId (se l elemento e stato cliccato)
+        } else {
+            //tolgo 1
+            likeCount.innerHTML = -- likeNum;
+            //aggiungo valore a likeNum
+            click.likes = likeNum;
+            //prendo l indice aggiunto all array
+            const idIndex = likeArray.indexOf(clickId);
+            //rimuovo elemento in base all indice preso
+            likeArray.splice(idIndex,1);
+        }
+        //aggiungo valore likeNum a likeCount
+        likeCount.innerHTML = likeNum;
+        //aggiungo valore alla var likeNum
+        click.likes = likeNum;
     })
 }
